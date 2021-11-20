@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
+
+const ALL_USERS = gql`
+  query GetAllUsers {
+    allUsers {
+      id
+      username
+      email
+    }
+  }
+`;
 
 function App() {
+  const queryInfo = useQuery(ALL_USERS);
+
+  const { data: { allUsers = [] } = {}, loading, error } = queryInfo;
+
+  if (error) return <div>oops</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>heading</h1>
+
+      {loading ? (
+        <span>loading...</span>
+      ) : (
+        allUsers.map((user) => <li key={user.id}>{user.email}</li>)
+      )}
     </div>
   );
 }
