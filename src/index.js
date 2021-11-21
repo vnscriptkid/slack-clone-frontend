@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import reportWebVitals from "./reportWebVitals";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import "semantic-ui-css/semantic.min.css";
+
+import reportWebVitals from "./reportWebVitals";
 import SwitchRoutes from "./routes";
 
 const client = new ApolloClient({
@@ -10,11 +12,9 @@ const client = new ApolloClient({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <SwitchRoutes />
-    </ApolloProvider>
-  </React.StrictMode>,
+  <ApolloProvider client={client}>
+    <SwitchRoutes />
+  </ApolloProvider>,
   document.getElementById("root")
 );
 
