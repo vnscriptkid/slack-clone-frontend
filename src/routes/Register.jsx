@@ -40,9 +40,7 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("^^ submit: ", { formData });
     const res = await register({ variables: formData });
-    console.log("^^ done: ", { res });
 
     if (res.data.register.ok) {
       navigate("/");
@@ -56,8 +54,6 @@ const Register = () => {
   };
 
   const { username, email, password } = formData;
-
-  console.log({ data, loading, error });
 
   const errorsList = Object.values(errors).filter((v) => !!v);
 
