@@ -1,7 +1,15 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { Button, Container, Header, Input } from "semantic-ui-react";
+import { useNavigate } from "react-router";
+import {
+  Button,
+  Container,
+  Form,
+  Header,
+  Input,
+  Message,
+} from "semantic-ui-react";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -18,57 +26,86 @@ const LOGIN = gql`
 `;
 
 const Login = () => {
-  const form = useLocalObservable(() => ({
-    email: "",
-    password: "",
-    setValue(key, value) {
-      this[key] = value;
-    },
-  }));
+  const { email, password, setValue, setErrors, errors } = useLocalObservable(
+    () => ({
+      email: "",
+      password: "",
+      errors: {},
+      setValue(key, value) {
+        this[key] = value;
+      },
+      setErrors(errors) {
+        this.errors = errors;
+      },
+    })
+  );
 
-  const [login, { data, loading, error }] = useMutation(LOGIN);
+  const [login, { loading }] = useMutation(LOGIN);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    form.setValue(name, value);
+    setValue(name, value);
   };
 
   const handleSubmit = async () => {
-    const { email, password } = form;
-    console.log("^^ submit: ", { email, password });
+    setErrors({});
+    const res = await login({ variables: { email, password } });
 
-    await login({ variables: { email, password } });
-
-    const { ok, token, refreshToken, errors } = data.login;
+    const { ok, token, refreshToken, errors } = res.data.login;
 
     if (ok) {
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
-      console.log("^^ token set");
+      navigate("/");
     } else {
-      console.log({ errors });
+      console.error({ errors });
+      // [ { path: 'name', message: 'invalid' } ]
+      const errorsMap = {};
+      for (let { path, message } of errors) {
+        errorsMap[path] = message;
+      }
+      setErrors(errorsMap);
     }
   };
 
+  const errorsList = Object.values(errors);
+
   return (
     <Container text>
-      <Header as="h2">Login</Header>
-      <Input
-        name="email"
-        value={form.email}
-        onChange={handleInputChange}
-        placeholder="Email"
-        fluid
-      />
-      <Input
-        name="password"
-        value={form.password}
-        onChange={handleInputChange}
-        type="password"
-        placeholder="Password"
-        fluid
-      />
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Form>
+        <Header as="h2">Login</Header>
+        <Form.Field error={!!errors.email}>
+          <Input
+            name="email"
+            value={email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            fluid
+          />
+        </Form.Field>
+        <Form.Field error={!!errors.password}>
+          <Input
+            name="password"
+            value={password}
+            onChange={handleInputChange}
+            type="password"
+            placeholder="Password"
+            fluid
+          />
+        </Form.Field>
+        <Button loading={loading} disabled={loading} onClick={handleSubmit}>
+          Submit
+        </Button>
+      </Form>
+      {errorsList.length > 0 && (
+        <Message
+          error
+          header="There was some errors with your submission"
+          list={errorsList}
+        />
+      )}
     </Container>
   );
 };

@@ -2,7 +2,14 @@ import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Button, Container, Header, Input, Message } from "semantic-ui-react";
+import {
+  Button,
+  Container,
+  Form,
+  Header,
+  Input,
+  Message,
+} from "semantic-ui-react";
 
 const REGISTER = gql`
   mutation Register($username: String!, $email: String!, $password: String!) {
@@ -31,7 +38,7 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const [register, { data, loading, error }] = useMutation(REGISTER);
+  const [register, { data, loading }] = useMutation(REGISTER);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,11 +49,13 @@ const Register = () => {
   const handleSubmit = async () => {
     const res = await register({ variables: formData });
 
-    if (res.data.register.ok) {
+    const { ok, errors } = res.data.register;
+
+    if (ok) {
       navigate("/");
     } else {
       const errorsObj = {};
-      for (let { message, path } of res.data.register.errors) {
+      for (let { message, path } of errors) {
         errorsObj[path] = message;
       }
       setErrors(errorsObj);
@@ -60,34 +69,39 @@ const Register = () => {
   return (
     <Container text>
       <Header as="h2">Register</Header>
-      <Input
-        error={!!errors.username}
-        name="username"
-        onChange={handleInputChange}
-        value={username}
-        placeholder="Username"
-        fluid
-      />
-      <Input
-        error={!!errors.email}
-        name="email"
-        onChange={handleInputChange}
-        value={email}
-        placeholder="Email"
-        fluid
-      />
-      <Input
-        error={!!errors.password}
-        name="password"
-        onChange={handleInputChange}
-        value={password}
-        type="password"
-        placeholder="Password"
-        fluid
-      />
-      <Button disabled={loading} loading={loading} onClick={handleSubmit}>
-        Submit
-      </Button>
+      <Form onSubmit={handleSubmit}>
+        <Form.Input error={!!errors.username}>
+          <Input
+            name="username"
+            onChange={handleInputChange}
+            value={username}
+            placeholder="Username"
+            fluid
+          />
+        </Form.Input>
+        <Form.Input error={!!errors.email}>
+          <Input
+            name="email"
+            onChange={handleInputChange}
+            value={email}
+            placeholder="Email"
+            fluid
+          />
+        </Form.Input>
+        <Form.Input error={!!errors.password}>
+          <Input
+            name="password"
+            onChange={handleInputChange}
+            value={password}
+            type="password"
+            placeholder="Password"
+            fluid
+          />
+        </Form.Input>
+        <Button disabled={loading} loading={loading}>
+          Submit
+        </Button>
+      </Form>
       {errorsList.length > 0 && (
         <Message
           error
