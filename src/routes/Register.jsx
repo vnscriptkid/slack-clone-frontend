@@ -1,11 +1,18 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { useState } from "react";
-import { Button, Container, Header, Input } from "semantic-ui-react";
+import { useNavigate } from "react-router";
+import { Button, Container, Header, Input, Message } from "semantic-ui-react";
 
 const REGISTER = gql`
   mutation Register($username: String!, $email: String!, $password: String!) {
-    register(username: $username, email: $email, password: $password)
+    register(username: $username, email: $email, password: $password) {
+      ok
+      errors {
+        path
+        message
+      }
+    }
   }
 `;
 
@@ -15,6 +22,14 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+  const [errors, setErrors] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
 
   const [register, { data, loading, error }] = useMutation(REGISTER);
 
@@ -28,16 +43,29 @@ const Register = () => {
     console.log("^^ submit: ", { formData });
     const res = await register({ variables: formData });
     console.log("^^ done: ", { res });
+
+    if (res.data.register.ok) {
+      navigate("/");
+    } else {
+      const errorsObj = {};
+      for (let { message, path } of res.data.register.errors) {
+        errorsObj[path] = message;
+      }
+      setErrors(errorsObj);
+    }
   };
 
   const { username, email, password } = formData;
 
   console.log({ data, loading, error });
 
+  const errorsList = Object.values(errors).filter((v) => !!v);
+
   return (
     <Container text>
       <Header as="h2">Register</Header>
       <Input
+        error={!!errors.username}
         name="username"
         onChange={handleInputChange}
         value={username}
@@ -45,6 +73,7 @@ const Register = () => {
         fluid
       />
       <Input
+        error={!!errors.email}
         name="email"
         onChange={handleInputChange}
         value={email}
@@ -52,6 +81,7 @@ const Register = () => {
         fluid
       />
       <Input
+        error={!!errors.password}
         name="password"
         onChange={handleInputChange}
         value={password}
@@ -62,6 +92,13 @@ const Register = () => {
       <Button disabled={loading} loading={loading} onClick={handleSubmit}>
         Submit
       </Button>
+      {errorsList.length > 0 && (
+        <Message
+          error
+          header="There was some errors with your submission"
+          list={errorsList}
+        />
+      )}
     </Container>
   );
 };
