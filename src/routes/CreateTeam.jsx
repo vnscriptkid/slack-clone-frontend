@@ -9,6 +9,7 @@ import {
   Header,
 } from "semantic-ui-react";
 import { useMutation, gql } from "@apollo/client";
+import { useNavigate } from "react-router";
 
 const CreateTeam = () => {
   const { errors, name, setName, setErrors } = useLocalObservable(() => ({
@@ -22,11 +23,19 @@ const CreateTeam = () => {
     },
   }));
 
+  const navigate = useNavigate();
   const [createTeam, { loading }] = useMutation(CREATE_TEAM);
 
   async function handleSubmit() {
     setErrors({});
-    const res = await createTeam({ variables: { name } });
+    let res;
+    try {
+      res = await createTeam({ variables: { name } });
+    } catch (e) {
+      console.error(e);
+      navigate("/login");
+      return;
+    }
 
     const { ok, errors } = res.data.createTeam;
 
