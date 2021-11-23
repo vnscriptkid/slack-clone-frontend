@@ -38,7 +38,7 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const [register, { data, loading }] = useMutation(REGISTER);
+  const [register, { loading }] = useMutation(REGISTER);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
