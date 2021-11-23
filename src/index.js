@@ -1,14 +1,50 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  HttpLink,
+  ApolloLink,
+  from,
+} from "@apollo/client";
 import "semantic-ui-css/semantic.min.css";
 
 import reportWebVitals from "./reportWebVitals";
 import SwitchRoutes from "./routes";
 
+const httpLink = new HttpLink({ uri: "http://localhost:4000/graphql" });
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+  // add the authorization to the headers
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      "x-token": localStorage.getItem("token"),
+      "x-refresh-token": localStorage.getItem("refreshToken"),
+    },
+  }));
+
+  return forward(operation);
+});
+
+const populateTokens = new ApolloLink((operation, forward) => {
+  return forward(operation).map((response) => {
+    const context = operation.getContext();
+
+    const token = context.response.headers.get("x-token");
+    const refreshToken = context.response.headers.get("x-refresh-token");
+
+    if (token) localStorage.setItem("token", token);
+    if (refreshToken) localStorage.setItem("token", refreshToken);
+
+    return response;
+  });
+});
+
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache(),
+  link: from([authMiddleware, populateTokens, httpLink]),
 });
 
 ReactDOM.render(
