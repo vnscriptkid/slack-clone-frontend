@@ -5,6 +5,7 @@ import CreateTeam from "./CreateTeam";
 import Home from "./Home";
 import Login from "./Login";
 import Register from "./Register";
+import ViewTeam from "./ViewTeam";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -29,6 +30,7 @@ const SwitchRoutes = () => (
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/view-team" element={<ViewTeam />} />
       <Route
         path="/create-team"
         element={
