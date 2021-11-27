@@ -1,4 +1,7 @@
+import { useState } from "react";
+import { Icon } from "semantic-ui-react";
 import styled from "styled-components";
+import AddChannelModal from "./AddChannelModal";
 
 const paddingLeft = "padding-left: 10px";
 
@@ -52,25 +55,35 @@ const user = ({ id, name }) => (
   </SideBarListItem>
 );
 
-const Channels = ({ teamName, username, channels, users }) => (
-  <ChannelWrapper>
-    <PushLeft>
-      <TeamNameHeader>{teamName}</TeamNameHeader>
-      {username}
-    </PushLeft>
-    <div>
-      <SideBarList>
-        <SideBarListHeader>Channels</SideBarListHeader>
-        {channels.map(channel)}
-      </SideBarList>
-    </div>
-    <div>
-      <SideBarList>
-        <SideBarListHeader>Direct Messages</SideBarListHeader>
-        {users.map(user)}
-      </SideBarList>
-    </div>
-  </ChannelWrapper>
-);
+const Channels = ({ teamName, username, channels, users }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <>
+      <ChannelWrapper>
+        <PushLeft>
+          <TeamNameHeader>{teamName}</TeamNameHeader>
+          {username}
+        </PushLeft>
+        <div>
+          <SideBarList>
+            <SideBarListHeader>
+              Channels{" "}
+              <Icon onClick={() => setModalOpen(true)} name="add circle" />
+            </SideBarListHeader>
+            {channels.map(channel)}
+          </SideBarList>
+        </div>
+        <div>
+          <SideBarList>
+            <SideBarListHeader>Direct Messages</SideBarListHeader>
+            {users.map(user)}
+          </SideBarList>
+        </div>
+      </ChannelWrapper>
+      <AddChannelModal open={modalOpen} setModalOpen={setModalOpen} />
+    </>
+  );
+};
 
 export default Channels;
