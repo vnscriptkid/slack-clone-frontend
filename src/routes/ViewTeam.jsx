@@ -3,14 +3,32 @@ import Messages from "../components/Messages";
 import SendMessage from "../components/SendMessage";
 import AppLayout from "../components/AppLayout";
 import Sidebar from "../containers/Sidebar";
+import { useQuery } from "@apollo/client";
+import { ALL_TEAMS } from "../graphql/team";
 import { useParams } from "react-router";
 
 const ViewTeam = () => {
   const { teamId } = useParams();
+  const queryInfo = useQuery(ALL_TEAMS);
+
+  const { data, loading, error } = queryInfo;
+
+  if (loading) return <div>loading...</div>;
+  if (error) return <div>oops</div>;
+
+  const { allTeams } = data;
+
+  const team = allTeams.find((t) => t.id === parseInt(teamId)) || allTeams[0];
 
   return (
     <AppLayout>
-      <Sidebar currentTeamId={teamId} />
+      <Sidebar
+        currentTeam={team}
+        allTeams={allTeams.map(({ id, name }) => ({
+          id,
+          letter: name.charAt(0).toUpperCase(),
+        }))}
+      />
       <Header channelName="general" />
       <Messages>
         <ul className="message-list">
