@@ -34,7 +34,7 @@ const populateTokens = new ApolloLink((operation, forward) => {
     const context = operation.getContext();
 
     if (get(response, "errors[0].message") === "Not authenticated") {
-      window.history.pushState(null, "", "login");
+      window.history.pushState(null, "", "/login");
       window.location.reload();
     } else {
       const token = context.response.headers.get("x-token");
