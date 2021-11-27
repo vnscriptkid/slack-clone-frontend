@@ -5,7 +5,7 @@ import AppLayout from "../components/AppLayout";
 import Sidebar from "../containers/Sidebar";
 import { useQuery } from "@apollo/client";
 import { ALL_TEAMS } from "../graphql/team";
-import { useParams } from "react-router";
+import { useParams, Navigate } from "react-router";
 
 const ViewTeam = () => {
   const { teamId } = useParams();
@@ -17,6 +17,10 @@ const ViewTeam = () => {
   if (error) return <div>oops</div>;
 
   const { allTeams } = data;
+
+  if (allTeams.length === 0) {
+    return <Navigate to="/create-team" />;
+  }
 
   const team = allTeams.find((t) => t.id === parseInt(teamId)) || allTeams[0];
 
