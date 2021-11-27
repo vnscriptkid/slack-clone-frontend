@@ -14,6 +14,7 @@ const ChannelWrapper = styled.div`
   grid-row: 1 / 4;
   background-color: #4e3a4c;
   color: #958993;
+  overflow: scroll;
 `;
 
 const TeamNameHeader = styled.h1`
