@@ -51,6 +51,7 @@ const populateTokens = new ApolloLink((operation, forward) => {
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: from([authMiddleware, populateTokens, httpLink]),
+  connectToDevTools: true,
 });
 
 ReactDOM.render(
