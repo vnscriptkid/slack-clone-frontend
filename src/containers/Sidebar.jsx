@@ -24,7 +24,8 @@ const Sidebar = ({ currentTeamId }) => {
   if (error) return <div>oops</div>;
 
   const { allTeams } = data;
-  const team = allTeams.find((t) => t.id === currentTeamId);
+  const team =
+    allTeams.find((t) => t.id === Number(currentTeamId)) || allTeams[0];
 
   return (
     <>

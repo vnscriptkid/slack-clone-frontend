@@ -30,7 +30,7 @@ const SwitchRoutes = () => (
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/view-team" element={<ViewTeam />} />
+      <Route path="/view-team/:teamId/:channelId" element={<ViewTeam />} />
       <Route
         path="/create-team"
         element={

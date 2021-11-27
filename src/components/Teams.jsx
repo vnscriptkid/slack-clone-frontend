@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const TeamWrapper = styled.div`
@@ -34,13 +35,17 @@ const TeamListItem = styled.li`
   }
 `;
 
-const team = ({ id, letter }) => (
-  <TeamListItem key={`team-${id}`}>{letter}</TeamListItem>
-);
+const Team = ({ id, letter }) => {
+  return (
+    <Link key={`team-${id}`} to={`/view-team/${id}/0`}>
+      <TeamListItem>{letter}</TeamListItem>
+    </Link>
+  );
+};
 
 const Teams = ({ teams }) => (
   <TeamWrapper>
-    <TeamList>{teams.map(team)}</TeamList>
+    <TeamList>{teams.map(Team)}</TeamList>
   </TeamWrapper>
 );
 

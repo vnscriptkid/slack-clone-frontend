@@ -37,10 +37,12 @@ const CreateTeam = () => {
       return;
     }
 
-    const { ok, errors } = res.data.createTeam;
+    const { ok, errors, team } = res.data.createTeam;
+    const [firstChannel] = team.channels;
 
     if (ok) {
       setName("");
+      navigate(`/view-team/${team.id}/${firstChannel.id}`);
     } else {
       let _errors = {};
       for (let { message, path } of errors) {
@@ -84,6 +86,12 @@ const CREATE_TEAM = gql`
   mutation CreateTeam($name: String!) {
     createTeam(name: $name) {
       ok
+      team {
+        id
+        channels {
+          id
+        }
+      }
       errors {
         path
         message
