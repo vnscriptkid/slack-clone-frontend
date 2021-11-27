@@ -1,16 +1,46 @@
-import { useMutation, gql } from "@apollo/client";
+import gql from "graphql-tag";
+import { useMutation } from "@apollo/client";
 import { Formik } from "formik";
 import { useParams } from "react-router";
 import { Button, Form, Input, Modal } from "semantic-ui-react";
-
-const CREATE_CHANNEL = gql`
-  mutation CreateChannel($teamId: Int!, $name: String!) {
-    createChannel(teamId: $teamId, name: $name)
-  }
-`;
+import { CREATE_CHANNEL } from "../graphql/channel";
 
 const AddChannelModal = ({ open, setModalOpen }) => {
-  const [createChannel] = useMutation(CREATE_CHANNEL);
+  const [createChannel] = useMutation(CREATE_CHANNEL, {
+    update(cache, { data: { createChannel } }) {
+      cache.modify({
+        fields: {
+          allTeams(existingTeams = []) {
+            const newTeamRef = cache.writeFragment({
+              data: createChannel.channel,
+              fragment: gql`
+                fragment NewChannel on Channel {
+                  id
+                  name
+                }
+              `,
+            });
+
+            return [...existingTeams, newTeamRef];
+          },
+        },
+      });
+    },
+    optimisticResponse({ name }) {
+      console.log("@@: ", name);
+      return {
+        createChannel: {
+          ok: true,
+          channel: {
+            id: -1,
+            name,
+            __typename: "Channel",
+          },
+          errors: null,
+        },
+      };
+    },
+  });
 
   const { teamId } = useParams();
 
