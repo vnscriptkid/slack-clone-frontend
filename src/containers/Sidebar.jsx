@@ -9,6 +9,7 @@ const ALL_TEAMS = gql`
       id
       name
       channels {
+        id
         name
       }
     }
@@ -38,10 +39,7 @@ const Sidebar = ({ currentTeamId }) => {
       <Channels
         teamName={get(team, "name", "The Team")}
         username="Username"
-        channels={[
-          { id: 1, name: "general" },
-          { id: 2, name: "random" },
-        ]}
+        channels={team.channels.map(({ id, name }) => ({ id, name }))}
         users={[
           { id: 1, name: "slackbot" },
           { id: 2, name: "user1" },
