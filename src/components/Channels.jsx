@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import styled from "styled-components";
 import AddChannelModal from "./AddChannelModal";
+import InvitePeopleModal from "./InvitePeopleModal";
 
 const paddingLeft = "padding-left: 10px";
 
@@ -57,7 +58,8 @@ const user = ({ id, name }) => (
 );
 
 const Channels = ({ teamName, username, channels, users }) => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [addChannelModalOpen, setAddChannelModalOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   return (
     <>
@@ -70,7 +72,10 @@ const Channels = ({ teamName, username, channels, users }) => {
           <SideBarList>
             <SideBarListHeader>
               Channels{" "}
-              <Icon onClick={() => setModalOpen(true)} name="add circle" />
+              <Icon
+                onClick={() => setAddChannelModalOpen(true)}
+                name="add circle"
+              />
             </SideBarListHeader>
             {channels.map(channel)}
           </SideBarList>
@@ -81,8 +86,20 @@ const Channels = ({ teamName, username, channels, users }) => {
             {users.map(user)}
           </SideBarList>
         </div>
+        <div>
+          <a href="#invite-people" onClick={() => setInviteModalOpen(true)}>
+            + Invite People
+          </a>
+        </div>
       </ChannelWrapper>
-      <AddChannelModal open={modalOpen} setModalOpen={setModalOpen} />
+      <AddChannelModal
+        open={addChannelModalOpen}
+        setModalOpen={setAddChannelModalOpen}
+      />
+      <InvitePeopleModal
+        open={inviteModalOpen}
+        setModalOpen={setInviteModalOpen}
+      />
     </>
   );
 };
