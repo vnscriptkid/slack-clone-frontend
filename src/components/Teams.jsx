@@ -6,6 +6,7 @@ const TeamWrapper = styled.div`
   grid-row: 1 / 4;
   background-color: #362234;
   color: #958993;
+  overflow: scroll;
 `;
 
 const TeamList = styled.ul`
