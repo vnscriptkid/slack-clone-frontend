@@ -1,8 +1,11 @@
 import Channels from "../components/Channels";
 import Teams from "../components/Teams";
 import { get } from "lodash";
+import useAuth from "../useAuth";
 
 const Sidebar = ({ allTeams = [], currentTeam = {} }) => {
+  const { currentUser } = useAuth();
+
   return (
     <>
       <Teams teams={allTeams} />
@@ -14,6 +17,7 @@ const Sidebar = ({ allTeams = [], currentTeam = {} }) => {
           { id: 1, name: "slackbot" },
           { id: 2, name: "user1" },
         ]}
+        isOwner={currentUser?.id === currentTeam.owner}
       />
     </>
   );

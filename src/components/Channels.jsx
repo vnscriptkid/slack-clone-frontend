@@ -57,7 +57,7 @@ const user = ({ id, name }) => (
   </SideBarListItem>
 );
 
-const Channels = ({ teamName, username, channels, users }) => {
+const Channels = ({ teamName, username, channels, users, isOwner }) => {
   const [addChannelModalOpen, setAddChannelModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
@@ -72,10 +72,12 @@ const Channels = ({ teamName, username, channels, users }) => {
           <SideBarList>
             <SideBarListHeader>
               Channels{" "}
-              <Icon
-                onClick={() => setAddChannelModalOpen(true)}
-                name="add circle"
-              />
+              {isOwner && (
+                <Icon
+                  onClick={() => setAddChannelModalOpen(true)}
+                  name="add circle"
+                />
+              )}
             </SideBarListHeader>
             {channels.map(channel)}
           </SideBarList>
@@ -86,11 +88,13 @@ const Channels = ({ teamName, username, channels, users }) => {
             {users.map(user)}
           </SideBarList>
         </div>
-        <div>
-          <a href="#invite-people" onClick={() => setInviteModalOpen(true)}>
-            + Invite People
-          </a>
-        </div>
+        {isOwner && (
+          <div>
+            <a href="#invite-people" onClick={() => setInviteModalOpen(true)}>
+              + Invite People
+            </a>
+          </div>
+        )}
       </ChannelWrapper>
       <AddChannelModal
         open={addChannelModalOpen}
