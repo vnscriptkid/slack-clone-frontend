@@ -16,19 +16,21 @@ const ViewTeam = () => {
   if (loading) return <div>loading...</div>;
   if (error) return <div>oops</div>;
 
-  const { allTeams } = data;
+  const { allTeams, invitedTeams } = data;
 
-  if (allTeams.length === 0) {
+  const teams = [...allTeams, ...invitedTeams];
+
+  if (teams.length === 0) {
     return <Navigate to="/create-team" />;
   }
 
-  const team = allTeams.find((t) => t.id === parseInt(teamId)) || allTeams[0];
+  const team = teams.find((t) => t.id === parseInt(teamId)) || teams[0];
 
   return (
     <AppLayout>
       <Sidebar
         currentTeam={team}
-        allTeams={allTeams.map(({ id, name }) => ({
+        allTeams={teams.map(({ id, name }) => ({
           id,
           letter: name.charAt(0).toUpperCase(),
         }))}
