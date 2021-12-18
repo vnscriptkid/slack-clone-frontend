@@ -1,11 +1,11 @@
 import Header from "../components/Header";
-import Messages from "../components/Messages";
 import SendMessage from "../components/SendMessage";
 import AppLayout from "../components/AppLayout";
 import Sidebar from "../containers/Sidebar";
 import { useQuery } from "@apollo/client";
 import { ALL_TEAMS } from "../graphql/team";
 import { useParams, Navigate } from "react-router";
+import MessageContainer from "../containers/MessageContainer";
 
 const ViewTeam = () => {
   const { teamId } = useParams();
@@ -38,13 +38,10 @@ const ViewTeam = () => {
         }))}
       />
       <Header channelName="general" />
-      <Messages>
-        <ul className="message-list">
-          <li />
-          <li />
-        </ul>
-      </Messages>
-      <SendMessage channelName={channel.name} channelId={channel.id} />
+      {channel && <MessageContainer channelId={channel.id} />}
+      {channel && (
+        <SendMessage channelName={channel.name} channelId={channel.id} />
+      )}
     </AppLayout>
   );
 };
