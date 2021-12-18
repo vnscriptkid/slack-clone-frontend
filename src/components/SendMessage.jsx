@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { Input } from "semantic-ui-react";
+import { Formik } from "formik";
+import { useMutation } from "@apollo/client";
+import { CREATE_MESSAGE } from "../graphql/message";
 
 const SendMessageWrapper = styled.div`
   grid-column: 3;
@@ -7,10 +10,41 @@ const SendMessageWrapper = styled.div`
   margin: 20px;
 `;
 
-const SendMessage = ({ channelName }) => (
-  <SendMessageWrapper>
-    <Input fluid placeholder={`Message #${channelName}`} />
-  </SendMessageWrapper>
-);
+const ENTER_KEY = 13;
+
+const SendMessage = ({ channelName, channelId }) => {
+  const [createMessage] = useMutation(CREATE_MESSAGE, {});
+
+  return (
+    <Formik
+      onSubmit={async ({ text }) => {
+        text = text.trim();
+
+        if (!text) return;
+
+        await createMessage({
+          variables: {
+            channelId,
+            text,
+          },
+        });
+      }}
+      initialValues={{ text: "" }}
+    >
+      {({ values: { text }, handleChange, handleSubmit }) => (
+        <SendMessageWrapper>
+          <Input
+            value={text}
+            name="text"
+            onChange={handleChange}
+            onKeyDown={(e) => e.keyCode === ENTER_KEY && handleSubmit(e)}
+            fluid
+            placeholder={`Message #${channelName}`}
+          />
+        </SendMessageWrapper>
+      )}
+    </Formik>
+  );
+};
 
 export default SendMessage;

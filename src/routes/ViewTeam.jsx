@@ -26,6 +26,8 @@ const ViewTeam = () => {
 
   const team = teams.find((t) => t.id === parseInt(teamId)) || teams[0];
 
+  const channel = team.channels[0];
+
   return (
     <AppLayout>
       <Sidebar
@@ -42,7 +44,7 @@ const ViewTeam = () => {
           <li />
         </ul>
       </Messages>
-      <SendMessage channelName="general" />
+      <SendMessage channelName={channel.name} channelId={channel.id} />
     </AppLayout>
   );
 };
