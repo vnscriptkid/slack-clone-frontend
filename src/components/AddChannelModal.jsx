@@ -27,7 +27,6 @@ const AddChannelModal = ({ open, setModalOpen }) => {
       });
     },
     optimisticResponse({ name }) {
-      console.log("@@: ", name);
       return {
         createChannel: {
           ok: true,

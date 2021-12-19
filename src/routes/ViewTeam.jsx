@@ -3,28 +3,29 @@ import SendMessage from "../components/SendMessage";
 import AppLayout from "../components/AppLayout";
 import Sidebar from "../containers/Sidebar";
 import { useQuery } from "@apollo/client";
-import { ALL_TEAMS } from "../graphql/team";
+import { ME_QUERY } from "../graphql/team";
 import { useParams, Navigate } from "react-router";
 import MessageContainer from "../containers/MessageContainer";
 
 const ViewTeam = () => {
   const { teamId, channelId } = useParams();
-  const queryInfo = useQuery(ALL_TEAMS);
+  const queryInfo = useQuery(ME_QUERY, {
+    fetchPolicy: "network-only",
+  });
 
   const { data, loading, error } = queryInfo;
 
   if (loading) return <div>loading...</div>;
   if (error) return <div>oops</div>;
 
-  const { allTeams, invitedTeams } = data;
+  const { me } = data;
 
-  const teams = [...allTeams, ...invitedTeams];
-
-  if (teams.length === 0) {
+  if (me.teams.length === 0) {
     return <Navigate to="/create-team" />;
   }
 
-  const currentTeam = teams.find((t) => t.id === parseInt(teamId)) || teams[0];
+  const currentTeam =
+    me.teams.find((t) => t.id === parseInt(teamId)) || me.teams[0];
 
   const currentChannel =
     currentTeam.channels.find((c) => c.id === parseInt(channelId)) ||
@@ -34,7 +35,7 @@ const ViewTeam = () => {
     <AppLayout>
       <Sidebar
         currentTeam={currentTeam}
-        allTeams={teams.map(({ id, name }) => ({
+        allTeams={me.teams.map(({ id, name }) => ({
           id,
           letter: name.charAt(0).toUpperCase(),
         }))}

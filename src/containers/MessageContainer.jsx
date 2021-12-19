@@ -42,7 +42,7 @@ const MessageContainer = ({ channelId }) => {
     });
 
     return unsub;
-  }, [channelId]);
+  }, [channelId, queryInfo]);
 
   const { data, loading, error } = queryInfo;
 
