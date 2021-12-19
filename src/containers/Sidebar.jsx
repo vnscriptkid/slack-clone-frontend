@@ -10,7 +10,7 @@ const Sidebar = ({ allTeams = [], currentTeam = {} }) => {
     <>
       <Teams teams={allTeams} />
       <Channels
-        teamName={get(currentTeam, "name", "The Team")}
+        teamName={get(currentTeam, "name", "No Team")}
         username="Username"
         channels={currentTeam.channels.map(({ id, name }) => ({ id, name }))}
         users={[

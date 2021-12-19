@@ -8,7 +8,7 @@ import { useParams, Navigate } from "react-router";
 import MessageContainer from "../containers/MessageContainer";
 
 const ViewTeam = () => {
-  const { teamId } = useParams();
+  const { teamId, channelId } = useParams();
   const queryInfo = useQuery(ALL_TEAMS);
 
   const { data, loading, error } = queryInfo;
@@ -24,23 +24,28 @@ const ViewTeam = () => {
     return <Navigate to="/create-team" />;
   }
 
-  const team = teams.find((t) => t.id === parseInt(teamId)) || teams[0];
+  const currentTeam = teams.find((t) => t.id === parseInt(teamId)) || teams[0];
 
-  const channel = team.channels[0];
+  const currentChannel =
+    currentTeam.channels.find((c) => c.id === parseInt(channelId)) ||
+    currentTeam.channels[0];
 
   return (
     <AppLayout>
       <Sidebar
-        currentTeam={team}
+        currentTeam={currentTeam}
         allTeams={teams.map(({ id, name }) => ({
           id,
           letter: name.charAt(0).toUpperCase(),
         }))}
       />
-      <Header channelName="general" />
-      {channel && <MessageContainer channelId={channel.id} />}
-      {channel && (
-        <SendMessage channelName={channel.name} channelId={channel.id} />
+      <Header channelName={currentChannel.name} />
+      {currentChannel && <MessageContainer channelId={currentChannel.id} />}
+      {currentChannel && (
+        <SendMessage
+          channelName={currentChannel.name}
+          channelId={currentChannel.id}
+        />
       )}
     </AppLayout>
   );

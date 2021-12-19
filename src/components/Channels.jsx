@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import styled from "styled-components";
 import AddChannelModal from "./AddChannelModal";
 import InvitePeopleModal from "./InvitePeopleModal";
+import { useParams } from "react-router";
 
 const paddingLeft = "padding-left: 10px";
 
@@ -47,9 +49,15 @@ const Green = styled.span`
 
 const Bubble = ({ on = true }) => (on ? <Green>●</Green> : "○");
 
-const channel = ({ id, name }) => (
-  <SideBarListItem key={`channel-${id}`}># {name}</SideBarListItem>
-);
+const Channel = ({ id, name }) => {
+  const { teamId } = useParams();
+
+  return (
+    <Link key={`channel-${id}`} to={`/view-team/${teamId}/${id}`}>
+      <SideBarListItem># {name}</SideBarListItem>
+    </Link>
+  );
+};
 
 const user = ({ id, name }) => (
   <SideBarListItem key={`user-${id}`}>
@@ -57,7 +65,7 @@ const user = ({ id, name }) => (
   </SideBarListItem>
 );
 
-const Channels = ({ teamName, username, channels, users, isOwner }) => {
+const Channels = ({ teamName, username, channels, users, isOwner, teamId }) => {
   const [addChannelModalOpen, setAddChannelModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
@@ -79,7 +87,7 @@ const Channels = ({ teamName, username, channels, users, isOwner }) => {
                 />
               )}
             </SideBarListHeader>
-            {channels.map(channel)}
+            {channels.map(Channel)}
           </SideBarList>
         </div>
         <div>
