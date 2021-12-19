@@ -19,7 +19,9 @@ const MessageContainer = ({ channelId }) => {
 
   return (
     <Messages>
-      <Comment.Group>
+      <Comment.Group
+        style={{ display: "flex", flexDirection: "column-reverse" }}
+      >
         {data.messages.map((m) => (
           <Comment key={`${m.id}-message`}>
             <Comment.Content>
