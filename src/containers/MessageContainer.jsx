@@ -23,10 +23,11 @@ const MessageContainer = ({ channelId }) => {
     variables: {
       channelId,
     },
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    queryInfo.subscribeToMore({
+    const unsub = queryInfo.subscribeToMore({
       document: newChannelMessageSubscription,
       variables: { channelId },
       updateQuery: (prev, { subscriptionData }) => {
@@ -39,7 +40,9 @@ const MessageContainer = ({ channelId }) => {
         });
       },
     });
-  }, []);
+
+    return unsub;
+  }, [channelId]);
 
   const { data, loading, error } = queryInfo;
 
