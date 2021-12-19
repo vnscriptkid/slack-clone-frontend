@@ -1,8 +1,22 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { useEffect } from "react";
 import { Comment } from "semantic-ui-react";
 
 import Messages from "../components/Messages";
+
+const newChannelMessageSubscription = gql`
+  subscription ($channelId: Int!) {
+    newChannelMessage(channelId: $channelId) {
+      id
+      text
+      user {
+        username
+      }
+      created_at
+    }
+  }
+`;
 
 const MessageContainer = ({ channelId }) => {
   const queryInfo = useQuery(MESSAGES, {
@@ -10,6 +24,22 @@ const MessageContainer = ({ channelId }) => {
       channelId,
     },
   });
+
+  useEffect(() => {
+    queryInfo.subscribeToMore({
+      document: newChannelMessageSubscription,
+      variables: { channelId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+
+        const newItem = subscriptionData.data.newChannelMessage;
+
+        return Object.assign({}, prev, {
+          messages: [newItem, ...prev.messages],
+        });
+      },
+    });
+  }, []);
 
   const { data, loading, error } = queryInfo;
 
@@ -42,7 +72,7 @@ const MessageContainer = ({ channelId }) => {
 };
 
 const MESSAGES = gql`
-  query ($channelId: Int!) {
+  query GetChannelMessages($channelId: Int!) {
     messages(channelId: $channelId) {
       id
       text

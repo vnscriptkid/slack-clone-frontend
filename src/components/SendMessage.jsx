@@ -17,7 +17,7 @@ const SendMessage = ({ channelName, channelId }) => {
 
   return (
     <Formik
-      onSubmit={async ({ text }) => {
+      onSubmit={async ({ text }, actions) => {
         text = text.trim();
 
         if (!text) return;
@@ -26,6 +26,13 @@ const SendMessage = ({ channelName, channelId }) => {
           variables: {
             channelId,
             text,
+          },
+        });
+
+        actions.setSubmitting(false);
+        actions.resetForm({
+          values: {
+            text: "",
           },
         });
       }}
