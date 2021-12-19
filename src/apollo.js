@@ -34,6 +34,8 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 });
 
 const populateTokens = new ApolloLink((operation, forward) => {
+  if (!forward(operation).map) return forward(operation);
+
   return forward(operation).map((response) => {
     const context = operation.getContext();
 
